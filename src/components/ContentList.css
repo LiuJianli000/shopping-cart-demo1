@@ -1,0 +1,21 @@
+.content {
+  width: 960px;
+  flex-shrink: 1;
+}
+
+.content_head {
+  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.content_head_selectBar {
+  font-size: 18px;
+}
+
+.content_list {
+  margin-top: 5px;
+  display: flex;
+  flex-wrap: wrap;
+}
+

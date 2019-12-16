@@ -1,0 +1,30 @@
+.open {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 60px;
+  width: 60px;
+  background: black;
+  text-align: center;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.open_icon {
+  font-size: 36px;
+  color: white;
+  line-height: 60px;
+}
+
+.open_count {
+  position: absolute;
+  height: 18px;
+  width:18px;
+  text-align: center;
+  line-height: 18px;
+  border-radius: 9px;
+  background: darkgoldenrod;
+  top: 32px;
+  left: 33px;
+  font-size: 10px;
+}
