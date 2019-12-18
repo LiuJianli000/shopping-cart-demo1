@@ -12,12 +12,11 @@ const { Meta } = Card;
 class ContentCard extends React.Component {
   
   addToCart = async() => {
-    
+    console.log(this.props.data)
     await this.props.dispatch({
       type: 'indexPage/addToCart',
       payload: {
         msg: this.props.data,
-        count: this.props.count + 1
       }
     })
 
