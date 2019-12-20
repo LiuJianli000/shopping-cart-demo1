@@ -27,6 +27,10 @@ class FloatCart extends React.Component {
     });
   };
 
+  handleCheckout = () => {
+    alert(`Checkout - Subtotal: $ ${this.props.subTotal.toFixed(2)}`)
+  }
+
   render() {
     const icon = (
       <div style={{ display: 'flex', width: '110px', margin: '0 auto' }}>
@@ -53,7 +57,10 @@ class FloatCart extends React.Component {
         <Button
           block
           style={{ borderRadius: 0, background: '#222', color: 'white', fontSize: '20px', border: 'none', height: '40px', lineHeight: '40px', marginTop: '20px' }}
-        >CHECKOUT</Button>
+          onClick={this.handleCheckout}
+        >
+          CHECKOUT
+        </Button>
       </div>
     )
     const empty = (

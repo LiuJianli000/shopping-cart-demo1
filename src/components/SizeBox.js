@@ -12,35 +12,35 @@ class SizeBox extends React.Component {
   select = (e) => {
 
     // console.log(e.target.style)
-    if(e.target.style.cssText) {
-      e.target.style = ""
+    // if(e.target.style.cssText) {
+    //   e.target.style = ""
 
-      // const _newSizeData = this.props.newSizeData
-      // _newSizeData.map(item => {
-      //   if(item.availableSizes.indexOf(e.target.innerText)>-1) {
-      //     _newSizeData.splice(_newSizeData.indexOf(item), 1)
-      //   }
-      // })
-      // console.log('newSizeData',_newSizeData)
-      // this.props.dispatch({
-      //   type: 'indexPage/select',
-      //   payload: _newSizeData
-      // })
-    }else {
-      e.target.style = "background: black; color: white"
+    //   const _newSizeData = this.props.newSizeData
+    //   _newSizeData.map(item => {
+    //     if(item.availableSizes.indexOf(e.target.innerText)>-1) {
+    //       _newSizeData.splice(_newSizeData.indexOf(item), 1)
+    //     }
+    //   })
+    //   console.log('newSizeData',_newSizeData)
+    //   this.props.dispatch({
+    //     type: 'indexPage/select',
+    //     payload: _newSizeData
+    //   })
+    // }else {
+    //   e.target.style = "background: black; color: white"
 
-      const newProducts2 = this.props.staticData.filter(function (item) {
-        if (item.availableSizes.indexOf(e.target.innerText) > -1) {
-          return item
-        }
-      })
-      // console.log('newProducts2', newProducts2)
-      this.props.dispatch({
-        type: 'indexPage/select',
-        payload: newProducts2
-      })
+    // }
 
-    }
+    const newProducts2 = this.props.staticData.filter(function (item) {
+      if (item.availableSizes.indexOf(e.target.innerText) > -1) {
+        return item
+      }
+    })
+    // console.log('newProducts2', newProducts2)
+    this.props.dispatch({
+      type: 'indexPage/select',
+      payload: newProducts2
+    })
   }
 
   onChange = (checkedValues) => {
