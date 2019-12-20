@@ -10,7 +10,8 @@ export default {
     cartData: [],  //购物车渲染的数据
     count: 0,
     sizeData: [],  //尺寸筛选出的数据(还未去重)
-    newSizeData: []   //去重的筛选数据
+    newSizeData: [],   //去重的筛选数据
+    subTotal: 0   //总价
   },
   reducers: {
     setProductData(state, payload) {
@@ -74,6 +75,8 @@ export default {
       const { msg } = payload
 
       let num = 0;
+      let count = 0
+      let subTotal = 0
       cartData.forEach(item => {
         if (item.id === msg.id) {
           item.quantity += 1;
@@ -81,6 +84,8 @@ export default {
         else {
           num ++
         }
+        count += item.quantity
+        // subTotal = subTotal + item.price + (item.quantity - 1)
       })
 
       if (cartData.length === num) {
@@ -88,48 +93,100 @@ export default {
           ...msg,
           quantity: 1
         })
+        count += 1
       }
+
+      cartData.forEach(item => {
+        subTotal  = subTotal + item.price * item.quantity
+      })
+      
       
       return {
         ...state,
         cartData,
-        count: state.count + 1
+        count,
+        subTotal
       }
       
     },
     countPlusOne(state, {payload: {quantity, id}}) {
       const { cartData } = state
 
-      // let num = 0
+      let count = 0
       cartData.forEach( item => {
-        if (item.id == id) {
+        if (item.id === id) {
           item.quantity = quantity
         }
 
-        // num += item.quantity
+        count += item.quantity
       })
 
       return {
         ...state,
         cartData,
-        count: state.count + 1
+        count
       }
     },
     countMinusOne(state, {payload: {quantity, id}}) {
       const { cartData } = state
+
+      let count = 0
       cartData.forEach( item => {
-        if (item.id == id) {
+        if (item.id === id) {
           item.quantity = quantity
         }
+        count += item.quantity
       })
       return {
         ...state,
         cartData,
-        count: state.count - 1
+        count
+      }
+    },
+    closeBtn(state, {payload: {id, quantity}}) {
+      const {cartData} = state
+      let count = 0
+      cartData.forEach(item => {
+        if(item.id === id) {
+          item.quantity = quantity
+          cartData.splice(cartData.findIndex(item => item.id === id), 1)
+        }
+      })
+      cartData.forEach(item => {
+        count += item.quantity
+      })
+      return {
+        ...state,
+        cartData,
+        count
+      }
+    },
+    subTotal(state, payload) {
+      let subTotal = 0
+      state.cartData.forEach(item => {
+        subTotal = subTotal + item.price * item.quantity
+      })
+      return {
+        ...state,
+        subTotal
       }
     }
   },
   effects: {
+    *handleClose({payload}, {put}) {
+      const {quantity, id} = payload
+      yield put({
+        type: 'closeBtn',
+        payload: {
+          quantity,
+          id
+        }
+      })
+
+      yield put({
+        type: 'subTotal',
+      })
+    },
     *minusOne({ payload: {quantity, id} }, { put }) {
       yield put({
         type: 'countMinusOne',
@@ -137,6 +194,10 @@ export default {
           quantity,
           id
         }
+      })
+
+      yield put({
+        type: 'subTotal',
       })
     },
     *plusOne({ payload: {quantity, id} }, { put }) {
@@ -146,6 +207,10 @@ export default {
           quantity,
           id
         }
+      })
+
+      yield put({
+        type: 'subTotal',
       })
     },
     *addToCart({ payload }, { put }) {

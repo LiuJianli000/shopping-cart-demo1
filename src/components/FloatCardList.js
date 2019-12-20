@@ -39,14 +39,14 @@ class FloatCardList extends React.Component {
 
   handleClose = () => {
     console.log('close...')
-    // const {data: {id}, dispatch} = this.props
-    // dispatch({
-    //   type: 'indexPage/handleClose',
-    //   payload: {
-    //     id,
-    //     quantity: 0
-    //   }
-    // })
+    const {data: {id}, dispatch} = this.props
+    dispatch({
+      type: 'indexPage/handleClose',
+      payload: {
+        id,
+        quantity: 0
+      }
+    })
   }
 
   render() {
