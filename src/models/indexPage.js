@@ -101,7 +101,11 @@ export default {
     *setStorage(payload, {put}) {
       yield put ({
         type: 'storageData',
-        data: JSON.parse(window.localStorage.data)
+        obj: {
+          data: JSON.parse(window.localStorage.data),
+          _count: window.localStorage.count,
+          _subTotal: JSON.parse(window.localStorage.subTotal)
+        }
       })
     }
   },
@@ -263,11 +267,13 @@ export default {
         subTotal
       }
     },
-    storageData(state, {data}) {
-      console.log('data........................', data)
+    storageData(state, {obj}) {
+      console.log('data........................', obj)
       return {
         ...state,
-        cartData: data
+        cartData: obj.data,
+        count: obj._count,
+        subTotal: obj._subTotal
       }
     }
   },
