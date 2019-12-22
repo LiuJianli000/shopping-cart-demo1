@@ -42,6 +42,7 @@ class FloatCart extends React.Component {
     
     // console.log('cartData', cartData)
     // console.log('storage',storage.data)
+    
     // 设置 localStorage
     if(cartData.length === 0) {
       console.log('success')
