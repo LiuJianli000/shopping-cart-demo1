@@ -38,10 +38,11 @@ class FloatCart extends React.Component {
   render() {
 
     const {cartData, count, subTotal, dispatch} = this.props
-    const {storage} = this.state
+    const {storage} = this.state 
     
-    console.log('cartData', cartData)
-    console.log('storage',storage.data)
+    // console.log('cartData', cartData)
+    // console.log('storage',storage.data)
+    // 设置 localStorage
     if(cartData.length === 0) {
       console.log('success')
       dispatch({
