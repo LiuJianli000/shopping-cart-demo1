@@ -12,7 +12,7 @@ const { Option } = Select;
 
 class SelectBox extends React.Component {
   onChange = (value) => {
-    console.log(`selected ${value}`);
+    // console.log(`selected ${value}`);
 
     const { products, dispatch, staticSize, staticData } = this.props
     

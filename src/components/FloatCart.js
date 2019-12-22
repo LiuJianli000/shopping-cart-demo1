@@ -11,14 +11,25 @@ import { connect } from 'dva'
 }))
 class FloatCart extends React.Component {
 
-  state = { visible: false };
+  state = { 
+    visible: false, 
+    storage: window.localStorage
+  };
 
   showDrawer = () => {
     this.setState({
       visible: true,
     });
 
-    console.log('ffffffffffffffffffff', this.props.cartData)
+    // console.log('ffffffffffffffffffff', this.props.cartData)
+
+
+    // let data = JSON.stringify(this.props.cartData)
+    // let storage = window.localStorage
+    // storage.setItem("data", data)
+    // let obj = JSON.parse(storage.data)
+    // console.log(obj)
+    // console.log(window.localStorage.data)    
   };
 
   onClose = () => {
@@ -68,7 +79,23 @@ class FloatCart extends React.Component {
 
       </div>
     )
-
+    
+    const {cartData, dispatch} = this.props
+    const {storage} = this.state
+    
+    console.log('cartData', cartData)
+    console.log('storage',storage.data)
+    if(cartData.length === 0) {
+      console.log('success')
+      dispatch({
+        type: 'indexPage/setStorage',
+      })  
+    }else {
+      console.log('failed')
+      let data = JSON.stringify(cartData)
+      storage.setItem("data", data)
+    }
+    
 
     return (
       <div>
@@ -87,7 +114,7 @@ class FloatCart extends React.Component {
           headerStyle={{ background: '#333', padding: '20px' }}
           bodyStyle={{ background: '#333', padding: 0 }}
         >
-          {this.props.cartData.map(item => (<FloatCartList data={item} key={item.id} />))}
+          {cartData.map(item => (<FloatCartList data={item} key={item.id} />))}
 
           {empty}
           {bottom}

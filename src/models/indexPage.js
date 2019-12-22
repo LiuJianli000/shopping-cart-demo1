@@ -11,7 +11,99 @@ export default {
     count: 0,
     sizeData: [],  //尺寸筛选出的数据(还未去重)
     newSizeData: [],   //去重的筛选数据
-    subTotal: 0   //总价
+    subTotal: 0,   //总价,
+  },
+  effects: {
+    *handleClose({payload}, {put}) {
+      const {quantity, id} = payload
+      yield put({
+        type: 'closeBtn',
+        payload: {
+          quantity,
+          id
+        }
+      })
+
+      yield put({
+        type: 'subTotal',
+      })
+    },
+    *minusOne({ payload: {quantity, id} }, { put }) {
+      yield put({
+        type: 'countMinusOne',
+        payload: {
+          quantity,
+          id
+        }
+      })
+
+      yield put({
+        type: 'subTotal',
+      })
+    },
+    *plusOne({ payload: {quantity, id} }, { put }) {
+      yield put({
+        type: 'countPlusOne',
+        payload: {
+          quantity,
+          id
+        }
+      })
+
+      yield put({
+        type: 'subTotal',
+      })
+    },
+    *addToCart({ payload }, { put }) {
+      // console.log('cart1', payload)
+      yield put({
+        type: 'cartData',
+        payload: payload
+      })
+
+      
+    },
+    *select({ payload }, { put }) {
+      yield put({
+        type: 'selectSizeData',
+        size: payload
+      })
+      yield put({
+        type: 'selectSize',
+        size: payload
+      })
+
+      yield put({
+        type: 'selectSizeStatic',
+      })
+    },
+    *sort({ payload }, { put }) {
+      yield put({
+        type: 'sortProduct',
+        data: payload
+      })
+    },
+    
+    *testMock({ payload }, { put, call }) {
+      let rel = yield call(apis.mockdata)
+      if (rel.data) {
+        yield put({
+          type: 'setProductData',
+          data: rel.data.products
+        })
+
+        yield put({
+          type: 'setStaticData',
+          data: rel.data.products
+        })
+      }
+    },
+    *setStorage(payload, {put}) {
+      yield put ({
+        type: 'storageData',
+        data: JSON.parse(window.localStorage.data)
+      })
+    }
   },
   reducers: {
     setProductData(state, payload) {
@@ -170,92 +262,14 @@ export default {
         ...state,
         subTotal
       }
-    }
-  },
-  effects: {
-    *handleClose({payload}, {put}) {
-      const {quantity, id} = payload
-      yield put({
-        type: 'closeBtn',
-        payload: {
-          quantity,
-          id
-        }
-      })
-
-      yield put({
-        type: 'subTotal',
-      })
     },
-    *minusOne({ payload: {quantity, id} }, { put }) {
-      yield put({
-        type: 'countMinusOne',
-        payload: {
-          quantity,
-          id
-        }
-      })
-
-      yield put({
-        type: 'subTotal',
-      })
-    },
-    *plusOne({ payload: {quantity, id} }, { put }) {
-      yield put({
-        type: 'countPlusOne',
-        payload: {
-          quantity,
-          id
-        }
-      })
-
-      yield put({
-        type: 'subTotal',
-      })
-    },
-    *addToCart({ payload }, { put }) {
-      // console.log('cart1', payload)
-      yield put({
-        type: 'cartData',
-        payload: payload
-      })
-
-      
-    },
-    *select({ payload }, { put }) {
-      yield put({
-        type: 'selectSizeData',
-        size: payload
-      })
-      yield put({
-        type: 'selectSize',
-        size: payload
-      })
-
-      yield put({
-        type: 'selectSizeStatic',
-      })
-    },
-    *sort({ payload }, { put }) {
-      yield put({
-        type: 'sortProduct',
-        data: payload
-      })
-    },
-    
-    *testMock({ payload }, { put, call }) {
-      let rel = yield call(apis.mockdata)
-      if (rel.data) {
-        yield put({
-          type: 'setProductData',
-          data: rel.data.products
-        })
-
-        yield put({
-          type: 'setStaticData',
-          data: rel.data.products
-        })
+    storageData(state, {data}) {
+      console.log('data........................', data)
+      return {
+        ...state,
+        cartData: data
       }
     }
-  }
+  },
+  
 }
