@@ -28,7 +28,7 @@ class FloatCardList extends React.Component {
     console.log('minus', this.props.data)
     if (quantity > 1) {
       this.props.dispatch({
-        type: 'indexPage/minusOne',
+        type: 'indexPage/plusOne',
         payload: {
           id,
           quantity: quantity - 1

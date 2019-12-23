@@ -6,7 +6,7 @@ export default {
   state: {
     name: 'chen',
     products: [],  //页面渲染的数据
-    staticSize: [],  //size 后的原始数据, default sort 用
+    staticSize: [],  //去重的筛选数据的备份, default sort 用
     staticData: [],  //原始的数据
     cartData: [],  //购物车渲染的数据
     count: 0,
@@ -281,7 +281,8 @@ export default {
         count: obj._count,
         subTotal: obj._subTotal
       }
-    }
+    },
+    
   },
   
 }

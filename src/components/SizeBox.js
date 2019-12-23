@@ -5,36 +5,71 @@ import { connect } from 'dva'
 @connect(({ indexPage }) => ({
   products: indexPage.products,
   staticData: indexPage.staticData,
-  newSizeData: indexPage.newSizeData
+  newSizeData: indexPage.newSizeData,
+  sizeData: indexPage.sizeData
 }))
 
 class SizeBox extends React.Component {
-  select = (e) => {
-    const {dispatch, staticData} = this.props
+  select = async (e) => {
+    const {dispatch, staticData, sizeData, products} = this.props
     // console.log(e.target.style)
     if(e.target.style.cssText) {
       e.target.style = ""
 
-      console.log('reset')
+      let filterId = []
+      sizeData.forEach(item => {
+        if(item.availableSizes.indexOf(e.target.innerText) > -1) {
+          filterId.push(item.id)
+          return item.id
+        } 
+      })
+      const _filterId = []
+      for(let item1 of filterId) {
+        let flag = true
+        for(let item2 of _filterId) {
+          if(item1 === item2) {
+            flag = false
+          }
+        }
+        if(flag) {
+          _filterId.push(item1)
+        }
+      }
+      console.log('_filterId', _filterId)
+      console.log('sizeData', sizeData)
+      let _sizeData = sizeData
+      await _filterId.forEach(num => {
+        // sizeData.forEach(item => {
+        //   if(num === item.id) {
+        //     _sizeData.splice(sizeData.findIndex(index => item.id === index), 1)
+        //   }
+        // })
+        _sizeData.splice(_sizeData.findIndex(item => item.id === num), 1)
+      })
+      console.log('_sizeData', _sizeData)
+      dispatch({
+        type: 'indexPage/select',
+        payload: _sizeData
+      })
+
       
+
     }else {
       e.target.style = "background: black; color: white"
 
-      const newProducts2 = staticData.filter(function (item) {
+      const newProducts = staticData.filter(function (item) {
         if (item.availableSizes.indexOf(e.target.innerText) > -1) {
           return item
         }
       })
-
+      // console.log(newProducts)
       dispatch({
         type: 'indexPage/select',
-        payload: newProducts2
+        payload: newProducts
       })
-    }
 
-    
-    // console.log('newProducts2', newProducts2)
-    
+     
+    }  
   }
 
   onChange = (checkedValues) => {
