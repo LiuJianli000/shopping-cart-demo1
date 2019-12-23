@@ -11,14 +11,14 @@ import { connect } from 'dva'
 }))
 class FloatCart extends React.Component {
 
-  state = { 
-    visible: false, 
-    storage: {}
+  state = {
+    visible: false,
   };
 
-  componentDidMount() {
-    this.setState({
-      storage: window.localStorage
+  componentWillMount() {
+    const {dispatch} = this.props
+    dispatch({
+      type: 'indexPage/setStorage'
     })
   }
 
@@ -43,27 +43,35 @@ class FloatCart extends React.Component {
 
   render() {
 
-    const {cartData, count, subTotal, dispatch} = this.props
-    const {storage} = this.state 
-    
+    const { cartData, count, subTotal, dispatch } = this.props
+    const storage = window.localStorage
+
     // console.log('cartData', cartData)
     // console.log('storage',storage.data)
-    
+
     // 设置 localStorage
-    if(cartData.length === 0) {
-      console.log('success')
-      dispatch({
-        type: 'indexPage/setStorage',
-      })  
-    }else {
-      console.log('failed')
-      let data = JSON.stringify(cartData)
-      let _count = count
-      let _subTotal = JSON.stringify(subTotal)
-      storage.setItem("data", data)
-      storage.setItem("count", _count)
-      storage.setItem("subTotal", _subTotal)
-    }
+    let data = JSON.stringify(cartData)
+    let _count = count
+    let _subTotal = JSON.stringify(subTotal)
+    storage.setItem("data", data)
+    storage.setItem("count", _count)
+    storage.setItem("subTotal", _subTotal)
+
+    
+    // if(cartData.length === 0) {
+    //   console.log('success')
+    //   // dispatch({
+    //   //   type: 'indexPage/setStorage',
+    //   // })  
+    // }else {
+    //   console.log('failed')
+    //   let data = JSON.stringify(cartData)
+    //   let _count = count
+    //   let _subTotal = JSON.stringify(subTotal)
+    //   storage.setItem("data", data)
+    //   storage.setItem("count", _count)
+    //   storage.setItem("subTotal", _subTotal)
+    // }
 
     const icon = (
       <div style={{ display: 'flex', width: '110px', margin: '0 auto' }}>
@@ -84,7 +92,7 @@ class FloatCart extends React.Component {
           <p style={{ margin: 0 }}>SUBTOTAL</p>
           <div style={{}}>
             <p style={{ margin: 0, color: 'darkgoldenrod', fontSize: '24px' }}>${subTotal.toFixed(2)}</p>
-            <p style={{ margin: 0 }}>OR UP TO 3 x $ {(subTotal/3).toFixed(2)}</p>
+            <p style={{ margin: 0 }}>OR UP TO 3 x $ {(subTotal / 3).toFixed(2)}</p>
           </div>
         </div>
         <Button
@@ -101,9 +109,9 @@ class FloatCart extends React.Component {
 
       </div>
     )
-    
-    
-    
+
+
+
 
     return (
       <div>
