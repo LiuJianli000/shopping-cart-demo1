@@ -11,14 +11,24 @@ import { connect } from 'dva'
 }))
 class FloatCart extends React.Component {
 
-  state = { visible: false };
+  state = { 
+    visible: false, 
+    storage: {}
+  };
+
+  componentDidMount() {
+    this.setState({
+      storage: window.localStorage
+    })
+  }
 
   showDrawer = () => {
     this.setState({
       visible: true,
     });
 
-    console.log('ffffffffffffffffffff', this.props.cartData)
+    // console.log('ffffffffffffffffffff', this.props.cartData)
+
   };
 
   onClose = () => {
@@ -32,12 +42,35 @@ class FloatCart extends React.Component {
   }
 
   render() {
+
+    const {cartData, count, subTotal, dispatch} = this.props
+    const {storage} = this.state 
+    
+    // console.log('cartData', cartData)
+    // console.log('storage',storage.data)
+    
+    // 设置 localStorage
+    if(cartData.length === 0) {
+      console.log('success')
+      dispatch({
+        type: 'indexPage/setStorage',
+      })  
+    }else {
+      console.log('failed')
+      let data = JSON.stringify(cartData)
+      let _count = count
+      let _subTotal = JSON.stringify(subTotal)
+      storage.setItem("data", data)
+      storage.setItem("count", _count)
+      storage.setItem("subTotal", _subTotal)
+    }
+
     const icon = (
       <div style={{ display: 'flex', width: '110px', margin: '0 auto' }}>
         <div style={{ width: '60px', height: '60px', textAlign: 'center', position: 'relative' }}>
           <Icon type="shopping-cart" style={{ color: 'white', fontSize: '40px', lineHeight: '60px' }} />
           <div style={{ position: 'absolute', top: 32, left: 33, color: 'black', fontSize: '5px', height: '18px', width: '18px', borderRadius: '9px', background: 'darkgoldenrod', lineHeight: '18px' }}>
-            {this.props.count}
+            {count}
           </div>
         </div>
         <span style={{ color: 'white', fontSize: '24px', lineHeight: '55px' }}>
@@ -50,8 +83,8 @@ class FloatCart extends React.Component {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
           <p style={{ margin: 0 }}>SUBTOTAL</p>
           <div style={{}}>
-            <p style={{ margin: 0, color: 'darkgoldenrod', fontSize: '24px' }}>${this.props.subTotal.toFixed(2)}</p>
-            <p style={{ margin: 0 }}>OR UP TO 3 x $ {(this.props.subTotal/3).toFixed(2)}</p>
+            <p style={{ margin: 0, color: 'darkgoldenrod', fontSize: '24px' }}>${subTotal.toFixed(2)}</p>
+            <p style={{ margin: 0 }}>OR UP TO 3 x $ {(subTotal/3).toFixed(2)}</p>
           </div>
         </div>
         <Button
@@ -68,13 +101,15 @@ class FloatCart extends React.Component {
 
       </div>
     )
-
+    
+    
+    
 
     return (
       <div>
         <div type="primary" onClick={this.showDrawer} className={styles.open}>
           <Icon type="shopping-cart" className={styles.open_icon} />
-          <div className={styles.open_count}>{this.props.count}</div>
+          <div className={styles.open_count}>{count}</div>
         </div>
         <Drawer
           title={icon}
@@ -87,7 +122,7 @@ class FloatCart extends React.Component {
           headerStyle={{ background: '#333', padding: '20px' }}
           bodyStyle={{ background: '#333', padding: 0 }}
         >
-          {this.props.cartData.map(item => (<FloatCartList data={item} key={item.id} />))}
+          {cartData.map(item => (<FloatCartList data={item} key={item.id} />))}
 
           {empty}
           {bottom}

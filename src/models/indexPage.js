@@ -11,7 +11,7 @@ export default {
     count: 0,
     sizeData: [],  //尺寸筛选出的数据(还未去重)
     newSizeData: [],   //去重的筛选数据
-    subTotal: 0   //总价
+    subTotal: 0,   //总价,
   },
   effects: {
     *handleClose({payload}, {put}) {
@@ -97,8 +97,19 @@ export default {
           data: rel.data.products
         })
       }
+    },
+    *setStorage(payload, {put}) {
+      yield put ({
+        type: 'storageData',
+        obj: {
+          data: JSON.parse(window.localStorage.data),
+          _count: window.localStorage.count,
+          _subTotal: JSON.parse(window.localStorage.subTotal)
+        }
+      })
     }
   },
+  
   reducers: {
     setProductData(state, payload) {
       //  console.log('ContentList挂载后', payload.data)
@@ -255,6 +266,16 @@ export default {
       return {
         ...state,
         subTotal
+      }
+
+    },
+    storageData(state, {obj}) {
+      console.log('data........................', obj)
+      return {
+        ...state,
+        cartData: obj.data,
+        count: obj._count,
+        subTotal: obj._subTotal
       }
     }
   },
