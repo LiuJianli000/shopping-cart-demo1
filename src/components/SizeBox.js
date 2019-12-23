@@ -17,7 +17,6 @@ class SizeBox extends React.Component {
 
       console.log('reset')
       
-      
     }else {
       e.target.style = "background: black; color: white"
 

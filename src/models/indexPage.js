@@ -1,4 +1,5 @@
 import * as apis from '../services/example'
+import products from '../assets/products'
 
 export default {
   namespace: 'indexPage',
@@ -12,6 +13,7 @@ export default {
     sizeData: [],  //尺寸筛选出的数据(还未去重)
     newSizeData: [],   //去重的筛选数据
     subTotal: 0,   //总价,
+    
   },
   effects: {
     *handleClose({payload}, {put}) {
@@ -85,16 +87,18 @@ export default {
     },
     
     *testMock({ payload }, { put, call }) {
-      let rel = yield call(apis.mockdata)
-      if (rel.data) {
+      // let rel = yield call(apis.mockdata)
+      // console.log(rel)
+      
+      if (products) {
         yield put({
           type: 'setProductData',
-          data: rel.data.products
+          data: products
         })
 
         yield put({
           type: 'setStaticData',
-          data: rel.data.products
+          data: products
         })
       }
     },
