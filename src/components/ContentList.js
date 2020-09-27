@@ -10,13 +10,15 @@ import ContentCard from '../components/ContentCard'
 
 class ContentList extends React.Component {
   componentDidMount() {
-    this.props.dispatch({
-      type: 'indexPage/testMock'
+    const { dispatch } = this.props
+
+    dispatch({
+      type: 'indexPage/fetch'
     })
   }
   
   render() {
-    const {products} = this.props
+    const { products } = this.props
 
     return (
       <div className={styles.content}>
@@ -30,18 +32,10 @@ class ContentList extends React.Component {
         <div className={styles.content_list}>
           {products.map(item => (
             <ContentCard data={item} key={item.id}/>
-            
           ))}
         </div>
       </div>
     )
   }
 }
-// function mapStateToProps(state) {
-//   console.log('mapStateToProps...', state)
-//   return {
-//     name: state.indexPage.name,
-//     products: state.indexPage.products
-//   }
-// }
 export default ContentList;

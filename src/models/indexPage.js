@@ -1,28 +1,54 @@
-import * as apis from '../services/example'
+// import * as apis from '../services/example'
 import products from '../assets/products'
 
 export default {
   namespace: 'indexPage',
   state: {
-    name: 'chen',
     products: [],  //页面渲染的数据
-    staticSize: [],  //去重的筛选数据的备份, default sort 用
-    staticData: [],  //原始的数据
+    originProducts: [],
+    sort: 'ds',
+    sizeProducts: [],
+    // --------------------------
     cartData: [],  //购物车渲染的数据
     count: 0,
     sizeData: [],  //尺寸筛选出的数据(还未去重)
     newSizeData: [],   //去重的筛选数据
-    subTotal: 0,   //总价,
-    
+    subTotal: 0,   //总价
   },
   effects: {
-    *handleClose({payload}, {put}) {
-      const {quantity, id} = payload
+    *fetch({ state }, { put }) {
+      if (products) {
+        yield put({
+          type: 'save',
+          data: products
+        })
+
+        yield put({
+          type: 'saveOrigin',
+          data: products
+        })
+      }
+    },
+    *selectSize({ payload }, { put }) {
+      yield put({
+        type: 'save',
+        data: payload
+      })
+
+      yield put({
+        type: 'saveSize',
+        data: payload
+      })
+    },
+    // -----------------------------------
+    *handleClose({ payload }, {put}) {
+      const { quantity, id, size } = payload
       yield put({
         type: 'closeBtn',
         payload: {
           quantity,
-          id
+          id,
+          size
         }
       })
 
@@ -30,12 +56,13 @@ export default {
         type: 'subTotal',
       })
     },
-    *minusOne({ payload: {quantity, id} }, { put }) {
+    *minusOne({ payload: { quantity, id, size } }, { put }) {
       yield put({
         type: 'countMinusOne',
         payload: {
           quantity,
-          id
+          id,
+          size,
         }
       })
 
@@ -43,12 +70,13 @@ export default {
         type: 'subTotal',
       })
     },
-    *plusOne({ payload: {quantity, id} }, { put }) {
+    *plusOne({ payload: { quantity, id, size } }, { put }) {
       yield put({
         type: 'countPlusOne',
         payload: {
           quantity,
-          id
+          id,
+          size,
         }
       })
 
@@ -57,7 +85,6 @@ export default {
       })
     },
     *addToCart({ payload }, { put }) {
-      // console.log('cart1', payload)
       yield put({
         type: 'cartData',
         payload: payload
@@ -65,44 +92,19 @@ export default {
 
       
     },
-    *select({ payload }, { put }) {
-      yield put({
-        type: 'selectSizeData',
-        size: payload
-      })
-      yield put({
-        type: 'selectSize',
-        size: payload
-      })
+    *saveLocalStorage({ payload }, { put }) {
+      const { cartData, count, subTotal } = payload
+      const storage = window.localStorage
 
-      yield put({
-        type: 'selectSizeStatic',
-      })
+      // 设置 localStorage
+      let data = JSON.stringify(cartData)
+      let _count = count
+      let _subTotal = JSON.stringify(subTotal)
+      storage.setItem("data", data)
+      storage.setItem("count", _count)
+      storage.setItem("subTotal", _subTotal)
     },
-    *sort({ payload }, { put }) {
-      yield put({
-        type: 'sortProduct',
-        data: payload
-      })
-    },
-    
-    *testMock({ payload }, { put, call }) {
-      // let rel = yield call(apis.mockdata)
-      // console.log(rel)
-      
-      if (products) {
-        yield put({
-          type: 'setProductData',
-          data: products
-        })
-
-        yield put({
-          type: 'setStaticData',
-          data: products
-        })
-      }
-    },
-    *setStorage(payload, {put}) {
+    *setStorage({}, {put}) {
       yield put ({
         type: 'storageData',
         obj: {
@@ -115,63 +117,46 @@ export default {
   },
   
   reducers: {
-    setProductData(state, payload) {
-      //  console.log('ContentList挂载后', payload.data)
+    save(state, payload) {
+      let newProducts = [...payload.data]
+
+      switch(state.sort) {
+        case 'lth':
+          newProducts.sort((a, b) => (a['price'] - b['price']))
+          break
+        case 'htl':
+          newProducts.sort((a, b) => (b['price'] - a['price']))
+          break
+        default: 
+          break
+      }
+
       return {
         ...state,
-        products: payload.data
+        products: newProducts,
       }
     },
-    setStaticData(state, payload) {
-      // console.log('setStaticData')
+    saveOrigin(state, payload) {
       return {
         ...state,
-        staticData: payload.data
+        originProducts: payload.data,
       }
     },
-    sortProduct(state, payload) {
+    saveSize(state, payload) {
       return {
         ...state,
-        products: payload.data
+        sizeProducts: payload.data,
       }
     },
-    selectSizeData(state, payload) {
+    sortProducts(state, payload) {
       return {
         ...state,
-        sizeData: state.sizeData.concat(payload.size)
+        products: payload.data,
+        sort: payload.sort
       }
     },
-    selectSize(state, payload) {
-      // console.log('xxxxxxxxxx', payload)
-      // state.sizeData = state.sizeData.concat(payload.size)
-      const newSizeData = []
-      for(let item1 of state.sizeData) {
-        let flag = true
-        for(let item2 of newSizeData) {
-          if(item1.id === item2.id) {
-            flag = false
-          }
-        }
-        if(flag) {
-          newSizeData.push(item1)
-        }
-      }
-      return {
-        ...state,
-        products: newSizeData,
-        newSizeData: newSizeData,
-      }
-    },
-    selectSizeStatic(state, payload) {
-      // console.log('xxxxxxxxxx', payload)
-      return {
-        ...state,
-        staticSize: state.newSizeData
-      }
-    },
+    // -------------------------------------------
     cartData(state, { payload }) {
-      console.log('cart2', payload.msg)
-      console.log('cartData', state.cartData)
       const { cartData } = state
       const { msg } = payload
 
@@ -179,14 +164,13 @@ export default {
       let count = 0
       let subTotal = 0
       cartData.forEach(item => {
-        if (item.id === msg.id) {
+        if (item.id === msg.id && item.size === msg.size) {
           item.quantity += 1;
         }
         else {
           num ++
         }
         count += item.quantity
-        // subTotal = subTotal + item.price + (item.quantity - 1)
       })
 
       if (cartData.length === num) {
@@ -201,7 +185,6 @@ export default {
         subTotal  = subTotal + item.price * item.quantity
       })
       
-      
       return {
         ...state,
         cartData,
@@ -210,12 +193,12 @@ export default {
       }
       
     },
-    countPlusOne(state, {payload: {quantity, id}}) {
+    countPlusOne(state, { payload: { quantity, id, size } }) {
       const { cartData } = state
 
       let count = 0
       cartData.forEach( item => {
-        if (item.id === id) {
+        if (item.id === id && item.size === size) {
           item.quantity = quantity
         }
 
@@ -228,12 +211,12 @@ export default {
         count
       }
     },
-    countMinusOne(state, {payload: {quantity, id}}) {
+    countMinusOne(state, {payload: { quantity, id, size }}) {
       const { cartData } = state
 
       let count = 0
       cartData.forEach( item => {
-        if (item.id === id) {
+        if (item.id === id && item.size === size) {
           item.quantity = quantity
         }
         count += item.quantity
@@ -244,18 +227,20 @@ export default {
         count
       }
     },
-    closeBtn(state, {payload: {id, quantity}}) {
-      const {cartData} = state
+    closeBtn(state, { payload: { id, quantity, size }}) {
+      const { cartData } = state
       let count = 0
+
       cartData.forEach(item => {
-        if(item.id === id) {
+        if(item.id === id && item.size === size) {
           item.quantity = quantity
-          cartData.splice(cartData.findIndex(item => item.id === id), 1)
+          cartData.splice(cartData.findIndex(item => item.id === id && item.size === size), 1)
         }
       })
       cartData.forEach(item => {
         count += item.quantity
       })
+
       return {
         ...state,
         cartData,
@@ -274,7 +259,6 @@ export default {
 
     },
     storageData(state, {obj}) {
-      console.log('data........................', obj)
       return {
         ...state,
         cartData: obj.data,

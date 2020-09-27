@@ -9,28 +9,28 @@ const ButtonGroup = Button.Group;
   count: indexPage.count
 }))
 class FloatCardList extends React.Component {
-
-
   addBtn = () => {
-    const { data: { id, quantity } } = this.props
-    console.log('addBtn', this.props.data)
-    this.props.dispatch({
+    const { data: { id, quantity, size }, dispatch } = this.props
+    
+    dispatch({
       type: 'indexPage/plusOne',
       payload: {
         id,
+        size,
         quantity: quantity + 1
       }
     })
   }
 
   minusBtn = () => {
-    const { data: { id, quantity } } = this.props
-    console.log('minus', this.props.data)
+    const { data: { id, quantity, size }, dispatch } = this.props
+
     if (quantity > 1) {
-      this.props.dispatch({
+      dispatch({
         type: 'indexPage/plusOne',
         payload: {
           id,
+          size,
           quantity: quantity - 1
         }
       })
@@ -38,12 +38,13 @@ class FloatCardList extends React.Component {
   }
 
   handleClose = () => {
-    console.log('close...')
-    const {data: {id}, dispatch} = this.props
+    const { data: { id, size }, dispatch } = this.props
+
     dispatch({
       type: 'indexPage/handleClose',
       payload: {
         id,
+        size,
         quantity: 0
       }
     })
@@ -56,7 +57,7 @@ class FloatCardList extends React.Component {
         <img className={styles.img} alt="" src={`./imgs/${data.sku}_2.jpg`}></img>
         <div className={styles.info}>
           <p>{data.title}</p>
-          <p>{data.availableSizes.map(res => (res + ' '))} | {data.style}</p>
+          <p>{data.size} | {data.style}</p>
           <p>Quantity: {data.quantity}</p>
         </div>
         <div className={styles.action}>
@@ -67,11 +68,28 @@ class FloatCardList extends React.Component {
               onClick={this.handleClose}
             />
           </div>
-          <div style={{ color: 'darkgoldenrod', fontSize: '18px', marginBottom: '10px' }}>$ {data.price.toFixed(2)}</div>
+          <div style={{ color: 'darkgoldenrod', fontSize: '18px', marginBottom: '10px' }}>
+            $ {data.price.toFixed(2)} x {data.quantity}
+          </div>
           <div>
             <ButtonGroup>
-              <Button type="primary" size="small" icon="minus" style={{ borderRadius: 0 }} onClick={this.minusBtn} />
-              <Button type="primary" size="small" icon="plus" style={{ borderRadius: 0 }} onClick={this.addBtn} />
+              <Button 
+                type="primary" 
+                size="small" 
+                icon="minus"
+                className={styles.btn}
+                style={{ borderRadius: '3px 0 0 3px' }} 
+                onClick={this.minusBtn} 
+                disabled={data.quantity === 1} 
+              />
+              <Button 
+                type="primary" 
+                size="small" 
+                icon="plus" 
+                className={styles.btn}
+                style={{ borderRadius: '0 3px 3px 0' }} 
+                onClick={this.addBtn} 
+              />
             </ButtonGroup>
           </div>
         </div>

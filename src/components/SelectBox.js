@@ -1,90 +1,61 @@
 import React from 'react'
 import {connect} from 'dva'
 import { Select } from 'antd';
+import IndexPage from '../routes/IndexPage';
 
 const { Option } = Select;
 
-@connect(({indexPage}) => ({
+@connect(({ indexPage }) => ({
   products: indexPage.products,
-  staticData: indexPage.staticData,
-  staticSize: indexPage.staticSize
+  sizeProducts: indexPage.sizeProducts,
 }))
 
 class SelectBox extends React.Component {
-  onChange = (value) => {
-    // console.log(`selected ${value}`);
-
-    const { products, dispatch, staticSize, staticData } = this.props
-    
-    if(value === 'all') {
-      dispatch({
-        type: 'indexPage/sort',
-        payload: [...staticData]
-      })
-    }
-    else if(value === 'ds') {
-      if(staticSize.length === 0) {
-        dispatch({
-          type: 'indexPage/sort',
-          payload: [...staticData]
-        })
-      }else {
-        dispatch({
-          type: 'indexPage/sort',
-          payload: [...staticSize]
-        })
-      }
-        
-    }
-    else if(value === 'lth') {
-      const sortProducts = products.sort((a, b) => (a['price'] - b['price']))
-      // console.log('1111111', [...sortProducts])
-      dispatch({
-        type: 'indexPage/sort',
-        payload: [...sortProducts]
-      })
-    }
-    else {
-      const sortProducts = products.sort((a, b) => (b['price'] - a['price']))
-      // console.log(sortProducts)
-      dispatch({
-        type: 'indexPage/sort',
-        payload: [...sortProducts]
-      })
-    }
+  state = {
+    value: 'ds'
   }
 
- 
+  handleChange = async value => {
+    await this.setState({
+      value,
+    })
 
-  // onBlur = () => {
-  //   console.log('blur');
-  // }
+    this.handleSelect(value)
+  }
 
-  // onFocus = () => {
-  //   console.log('focus');
-  // }
+  handleSelect = async value => {
+    const { products, dispatch, sizeProducts } = this.props
+    let newProducts = [...products]
 
-  onSearch = (val) => {
-    console.log('search:', val);
-    
+    switch(value) {
+      case 'lth':
+        newProducts.sort((a, b) => (a['price'] - b['price']))
+        break
+      case 'htl':
+        newProducts.sort((a, b) => (b['price'] - a['price']))
+        break
+      default: 
+        newProducts = sizeProducts
+        break
+    }
+
+    dispatch({
+      type: 'indexPage/sortProducts',
+      data: newProducts,
+      sort: value
+    })
   }
 
   render() {
+    const { value } = this.state
+    
     return (
       <Select
-        showSearch
         style={{ width: 185, marginLeft: '10px', borderRadius: 0, color: 'black', fontSize: '18px' }}
         placeholder="Select"
-        optionFilterProp="children"
-        onChange={this.onChange}
-        onFocus={this.onFocus}
-        onBlur={this.onBlur}
-        onSearch={this.onSearch}
-        filterOption={(input, option) =>
-          option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        }
+        value={value}
+        onChange={this.handleChange}
       >
-        <Option value="all">All</Option>
         <Option value="ds">Default sort</Option>
         <Option value="lth">Lowest to Heigest</Option>
         <Option value="htl">Heigest to Lowest</Option>

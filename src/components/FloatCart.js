@@ -22,13 +22,32 @@ class FloatCart extends React.Component {
     })
   }
 
+  componentDidUpdate(prevProps) {
+    const { cartData, count, subTotal, dispatch } = this.props
+    const storage = window.localStorage
+
+    // 设置 localStorage
+    let data = JSON.stringify(cartData)
+    let _count = count
+    let _subTotal = JSON.stringify(subTotal)
+    storage.setItem("data", data)
+    storage.setItem("count", _count)
+    storage.setItem("subTotal", _subTotal)
+
+    dispatch({
+      type: 'indexPage/saveLocalStorage',
+      payload: {
+        cartData,
+        count,
+        subTotal
+      }
+    })
+  }
+
   showDrawer = () => {
     this.setState({
       visible: true,
     });
-
-    // console.log('ffffffffffffffffffff', this.props.cartData)
-
   };
 
   onClose = () => {
@@ -42,37 +61,8 @@ class FloatCart extends React.Component {
   }
 
   render() {
-
-    const { cartData, count, subTotal, dispatch } = this.props
-    const storage = window.localStorage
-
-    // console.log('cartData', cartData)
-    // console.log('storage',storage.data)
-
-    // 设置 localStorage
-    let data = JSON.stringify(cartData)
-    let _count = count
-    let _subTotal = JSON.stringify(subTotal)
-    storage.setItem("data", data)
-    storage.setItem("count", _count)
-    storage.setItem("subTotal", _subTotal)
-
+    const { cartData, count, subTotal } = this.props
     
-    // if(cartData.length === 0) {
-    //   console.log('success')
-    //   // dispatch({
-    //   //   type: 'indexPage/setStorage',
-    //   // })  
-    // }else {
-    //   console.log('failed')
-    //   let data = JSON.stringify(cartData)
-    //   let _count = count
-    //   let _subTotal = JSON.stringify(subTotal)
-    //   storage.setItem("data", data)
-    //   storage.setItem("count", _count)
-    //   storage.setItem("subTotal", _subTotal)
-    // }
-
     const icon = (
       <div style={{ display: 'flex', width: '110px', margin: '0 auto' }}>
         <div style={{ width: '60px', height: '60px', textAlign: 'center', position: 'relative' }}>
@@ -110,9 +100,6 @@ class FloatCart extends React.Component {
       </div>
     )
 
-
-
-
     return (
       <div>
         <div type="primary" onClick={this.showDrawer} className={styles.open}>
@@ -130,8 +117,7 @@ class FloatCart extends React.Component {
           headerStyle={{ background: '#333', padding: '20px' }}
           bodyStyle={{ background: '#333', padding: 0 }}
         >
-          {cartData.map(item => (<FloatCartList data={item} key={item.id} />))}
-
+          {cartData.map((item, key) => (<FloatCartList data={item} key={key} />))}
           {empty}
           {bottom}
         </Drawer>

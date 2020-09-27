@@ -4,92 +4,70 @@ import { connect } from 'dva'
 
 @connect(({ indexPage }) => ({
   products: indexPage.products,
-  staticData: indexPage.staticData,
-  newSizeData: indexPage.newSizeData,
-  sizeData: indexPage.sizeData
+  originProducts: indexPage.originProducts
 }))
-
 class SizeBox extends React.Component {
-  select = async (e) => {
-    const {dispatch, staticData, sizeData, products} = this.props
-    // console.log(e.target.style)
-    if(e.target.style.cssText) {
-      e.target.style = ""
-
-      let filterId = []
-      sizeData.forEach(item => {
-        if(item.availableSizes.indexOf(e.target.innerText) > -1) {
-          filterId.push(item.id)
-          return item.id
-        } 
-      })
-      const _filterId = []
-      for(let item1 of filterId) {
-        let flag = true
-        for(let item2 of _filterId) {
-          if(item1 === item2) {
-            flag = false
-          }
-        }
-        if(flag) {
-          _filterId.push(item1)
-        }
-      }
-      console.log('_filterId', _filterId)
-      console.log('sizeData', sizeData)
-      let _sizeData = sizeData
-      await _filterId.forEach(num => {
-        // sizeData.forEach(item => {
-        //   if(num === item.id) {
-        //     _sizeData.splice(sizeData.findIndex(index => item.id === index), 1)
-        //   }
-        // })
-        _sizeData.splice(_sizeData.findIndex(item => item.id === num), 1)
-      })
-      console.log('_sizeData', _sizeData)
-      dispatch({
-        type: 'indexPage/select',
-        payload: _sizeData
-      })
-
-      
-
-    }else {
-      e.target.style = "background: black; color: white"
-
-      const newProducts = staticData.filter(function (item) {
-        if (item.availableSizes.indexOf(e.target.innerText) > -1) {
-          return item
-        }
-      })
-      // console.log(newProducts)
-      dispatch({
-        type: 'indexPage/select',
-        payload: newProducts
-      })
-
-     
-    }  
+  state = {
+    sizeList: ['XS', 'S', 'M', 'ML', 'L', 'XL', 'XXL'],
+    selectSize: [],
   }
 
-  onChange = (checkedValues) => {
-    console.log('checked = ', checkedValues);
+  handleSelect = async size => {
+    const { dispatch, products, originProducts } = this.props
+    const { selectSize } = this.state
+    const newSelectSize = [...selectSize]
+    const sizeIndex = newSelectSize.indexOf(size)
+    const newProducts = []
+
+    if (sizeIndex > -1) {
+      newSelectSize.splice(sizeIndex, 1)
+      
+      await this.setState({
+        selectSize: newSelectSize,
+      })
+    } else {
+      newSelectSize.push(size)
+
+      await this.setState({
+        selectSize: newSelectSize,
+      })
+    }
+
+    originProducts.map(item => {
+      let hasSize = false
+
+      item.availableSizes.map(size => {
+        if (this.state.selectSize.indexOf(size) > -1) {
+          hasSize = true
+        }
+      })
+
+      if (hasSize) {
+        newProducts.push(item)
+      }
+    })
+
+    dispatch({
+      type: 'indexPage/selectSize',
+      payload: this.state.selectSize.length > 0 ? newProducts : originProducts
+    })
   }
 
   render() {
+    const { sizeList, selectSize } = this.state
+
     return (
       <div className={styles.sizebox}>
         <h2>Sizes:</h2>
         <ul className={styles.filter}>
-          <li onClick={this.select}>XS</li>
-          <li onClick={this.select}>S</li>
-          <li onClick={this.select}>M</li>
-          <li onClick={this.select}>ML</li>
-          <li onClick={this.select}>L</li>
-          <li onClick={this.select}>XL</li>
-          <li onClick={this.select}>XXL</li>
+          {sizeList.map(item => 
+            <li
+              key={item}
+              style={{ borderColor: selectSize.indexOf(item) > -1 && 'black' }} 
+              onClick={() => this.handleSelect(item)}
+            >{item}</li>)
+          }
         </ul>
-
       </div>
     )
   }
