@@ -32,9 +32,13 @@ class ContentCard extends Component {
       <Card
         hoverable='true'
         className={styles.card}
-        cover={<img alt={data.key} src={`./imgs/${data.sku}_1.jpg`} />}
+        // cover={<img alt={data.key} src={`./imgs/${data.sku}_1.jpg`} />}
         bodyStyle={{padding: 0}}
       >
+        {data.sku ? 
+          <img alt={data.key} src={`./imgs/${data.sku}_1.jpg`} style={{ width: 218, height: 316 }} /> :
+          <div style={{ width: 218, height: 316, background: '#eee' }}></div>
+        }
         <div className={styles.freeShipping}>{data.isFreeShipping ? 'Free Shipping': ''}</div>
         <Meta title={data.title} style={{margin: '10px 0', textAlign: 'center'}}/>
         <p style={{fontWeight: '600', textAlign: 'center', marginBottom: 0, fontSize: '18px'}}>
