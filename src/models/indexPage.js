@@ -17,7 +17,7 @@ export default {
   effects: {
     *fetch({ payload }, { put }) {
       const products = payload
-      
+
       if (products) {
         yield put({
           type: 'save',
@@ -109,9 +109,9 @@ export default {
       yield put ({
         type: 'storageData',
         obj: {
-          data: JSON.parse(window.localStorage.data),
+          data: window.localStorage.data ? JSON.parse(window.localStorage.data) : [],
           _count: window.localStorage.count,
-          _subTotal: JSON.parse(window.localStorage.subTotal)
+          _subTotal: window.localStorage.subTotal ? JSON.parse(window.localStorage.subTotal) : 0
         }
       })
     }

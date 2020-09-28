@@ -104,7 +104,7 @@ class FloatCart extends React.Component {
       <div>
         <div type="primary" onClick={this.showDrawer} className={styles.open}>
           <Icon type="shopping-cart" className={styles.open_icon} />
-          <div className={styles.open_count}>{count}</div>
+          <div className={styles.open_count}>{count || 0}</div>
         </div>
         <Drawer
           title={icon}
