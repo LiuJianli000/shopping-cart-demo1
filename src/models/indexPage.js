@@ -1,5 +1,4 @@
-// import * as apis from '../services/example'
-import products from '../assets/products'
+// import products from '../assets/products'
 
 export default {
   namespace: 'indexPage',
@@ -16,7 +15,9 @@ export default {
     subTotal: 0,   //总价
   },
   effects: {
-    *fetch({ state }, { put }) {
+    *fetch({ payload }, { put }) {
+      const products = payload
+      
       if (products) {
         yield put({
           type: 'save',
@@ -140,6 +141,7 @@ export default {
       return {
         ...state,
         originProducts: payload.data,
+        sizeProducts: payload.data
       }
     },
     saveSize(state, payload) {

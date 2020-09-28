@@ -1,7 +1,6 @@
 import React from 'react'
 import {connect} from 'dva'
 import { Select } from 'antd';
-import IndexPage from '../routes/IndexPage';
 
 const { Option } = Select;
 
