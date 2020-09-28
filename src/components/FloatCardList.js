@@ -5,15 +5,15 @@ import { connect } from 'dva'
 
 const ButtonGroup = Button.Group;
 
-@connect(({ indexPage }) => ({
-  count: indexPage.count
+@connect(({ shoppingCart }) => ({
+  count: shoppingCart.count
 }))
 class FloatCardList extends React.Component {
   addBtn = () => {
     const { data: { id, quantity, size }, dispatch } = this.props
     
     dispatch({
-      type: 'indexPage/plusOne',
+      type: 'shoppingCart/plusOne',
       payload: {
         id,
         size,
@@ -27,7 +27,7 @@ class FloatCardList extends React.Component {
 
     if (quantity > 1) {
       dispatch({
-        type: 'indexPage/plusOne',
+        type: 'shoppingCart/plusOne',
         payload: {
           id,
           size,
@@ -41,7 +41,7 @@ class FloatCardList extends React.Component {
     const { data: { id, size }, dispatch } = this.props
 
     dispatch({
-      type: 'indexPage/handleClose',
+      type: 'shoppingCart/handleClose',
       payload: {
         id,
         size,

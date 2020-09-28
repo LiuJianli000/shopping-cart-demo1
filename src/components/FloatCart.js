@@ -4,10 +4,10 @@ import { Drawer, Icon, Button } from 'antd';
 import FloatCartList from '../components/FloatCardList'
 import { connect } from 'dva'
 
-@connect(({ indexPage }) => ({
-  cartData: indexPage.cartData,
-  count: indexPage.count,
-  subTotal: indexPage.subTotal
+@connect(({ shoppingCart }) => ({
+  cartData: shoppingCart.cartData,
+  count: shoppingCart.count,
+  subTotal: shoppingCart.subTotal
 }))
 class FloatCart extends React.Component {
 
@@ -18,7 +18,7 @@ class FloatCart extends React.Component {
   componentWillMount() {
     const {dispatch} = this.props
     dispatch({
-      type: 'indexPage/setStorage'
+      type: 'shoppingCart/setStorage'
     })
   }
 
@@ -35,7 +35,7 @@ class FloatCart extends React.Component {
     storage.setItem("subTotal", _subTotal)
 
     dispatch({
-      type: 'indexPage/saveLocalStorage',
+      type: 'shoppingCart/saveLocalStorage',
       payload: {
         cartData,
         count,

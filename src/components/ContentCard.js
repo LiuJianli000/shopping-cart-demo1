@@ -5,9 +5,9 @@ import { connect } from 'dva';
 
 const { Meta } = Card;
 
-@connect(({ indexPage }) => ({
-  cartData: indexPage.cartData,
-  count: indexPage.count
+@connect(({ shoppingCart }) => ({
+  cartData: shoppingCart.cartData,
+  count: shoppingCart.count
 }))
 class ContentCard extends Component {
   
@@ -18,7 +18,7 @@ class ContentCard extends Component {
     newData.size = item
 
     await dispatch({
-      type: 'indexPage/addToCart',
+      type: 'shoppingCart/addToCart',
       payload: {
         msg: newData,
       }
